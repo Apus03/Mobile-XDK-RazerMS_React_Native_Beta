@@ -4,23 +4,26 @@
 //#define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
 #import "MOLPayWebview.h"
 
+@interface MOLPayWebview() <WKUIDelegate>
+
+@end
+
 @implementation MOLPayWebview
 
 - (id)init
 {
     self = [super init];
-    
+
     if (self) {
         self.scrollView.bounces = NO;
     }
-    
+
     return self;
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
-    
     if (self) {
         self.scrollView.bounces = NO;
     }
@@ -34,12 +37,16 @@
 }
 
 - (void)closemolpay {
-    [self stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"closemolpay()"]];
+    [self evaluateJavaScript:[NSString stringWithFormat:@"closemolpay()"] completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+        
+    }];
 }
 
 - (void)transactionRequest
 {
-    [self stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"transactionRequest()"]];
+    [self evaluateJavaScript:[NSString stringWithFormat:@"transactionRequest()"] completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+        
+    }];
 }
 
 - (void)updateSdkData :(id)data
@@ -54,7 +61,9 @@
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         DLog(@">>>>>>>>> jsonString = %@", jsonString);
-        [self stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"updateSdkData(%@)", jsonString]];
+        [self evaluateJavaScript:[NSString stringWithFormat:@"updateSdkData(%@)", jsonString] completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+            
+        }];
     }
 }
 
@@ -70,7 +79,9 @@
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         DLog(@">>>>>>>>>nativeWebRequestUrlUpdates jsonString = %@", jsonString);
-        [self stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"nativeWebRequestUrlUpdates(%@)", jsonString]];
+        [self evaluateJavaScript:[NSString stringWithFormat:@"nativeWebRequestUrlUpdates(%@)", jsonString] completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+            
+        }];
     }
     
 }
@@ -87,7 +98,9 @@
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         DLog(@">>>>>>>>>nativeWebRequestUrlUpdatesOnFinishLoad jsonString = %@", jsonString);
-        [self stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"nativeWebRequestUrlUpdatesOnFinishLoad(%@)", jsonString]];
+        [self evaluateJavaScript:[NSString stringWithFormat:@"nativeWebRequestUrlUpdatesOnFinishLoad(%@)", jsonString] completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+            
+        }];
     }
     
 }
@@ -97,11 +110,15 @@
 {
     NSString *overwriteScript = @"window.open = function (open) { return function (url, name, features) { window.location = url; return window; }; } (window.open);";
     
-    [self stringByEvaluatingJavaScriptFromString:overwriteScript];
+    [self evaluateJavaScript:overwriteScript completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+        
+    }];
     
     overwriteScript = @"window.close = function () { window.location.assign(window.location); };";
     
-    [self stringByEvaluatingJavaScriptFromString:overwriteScript];
+    [self evaluateJavaScript:overwriteScript completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+        
+    }];
 }
 
 

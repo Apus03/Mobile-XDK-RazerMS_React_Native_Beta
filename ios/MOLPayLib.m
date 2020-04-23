@@ -6,7 +6,7 @@
 #import "MOLPayLib.h"
 #import "MOLPayMainUI.h"
 
-@interface MOLPayLib () <UIWebViewDelegate> {
+@interface MOLPayLib () <WKUIDelegate,WKNavigationDelegate> {
     BOOL isMainUILoaded;
     BOOL isTransactionRequestInQueue;
 }
@@ -45,7 +45,8 @@ const NSString *wrapperVersion = @"0";
         // Init and add webview component with the parent frame
         [self.view addSubview:[MOLPayMainUI getInstance]];
         [[MOLPayMainUI getInstance] setFrame:self.view.frame];
-        [[MOLPayMainUI getInstance] setDelegate:self];
+//        [[MOLPayMainUI getInstance] setUIDelegate:self];
+        [[MOLPayMainUI getInstance] setNavigationDelegate:self];
         [[MOLPayMainUI getInstance] startUI];
     }
     
@@ -72,7 +73,8 @@ const NSString *wrapperVersion = @"0";
         // Init and add webview component with the parent frame
         [self.view addSubview:[MOLPayMainUI getInstance]];
         [[MOLPayMainUI getInstance] setFrame:self.view.frame];
-        [[MOLPayMainUI getInstance] setDelegate:self];
+//        [[MOLPayMainUI getInstance] setUIDelegate:self];
+        [[MOLPayMainUI getInstance] setNavigationDelegate:self];
         [[MOLPayMainUI getInstance] startUI];
     }
     
@@ -112,7 +114,8 @@ const NSString *wrapperVersion = @"0";
 {
     [super viewDidAppear:animated];
     [self.view addSubview:[MOLPayMainUI getInstance]];
-    [[MOLPayMainUI getInstance] setDelegate:self];
+//    [[MOLPayMainUI getInstance] setUIDelegate:self];
+    [[MOLPayMainUI getInstance] setNavigationDelegate:self];
     
     if(self.navigationController.navigationBar)
     {
@@ -158,18 +161,18 @@ const NSString *wrapperVersion = @"0";
     self.navigationController.navigationBar.translucent = NO;
 }
 
-// UIWebview Delegates
-- (void)webViewDidStartLoad:(UIWebView *)webView
+// WKWebView Delegates
+- (void)didStartProvisionalNavigation:(WKWebView *)webView
 {
     if ([webView isEqual:[MOLPayMainUI getInstance]]) {
         DLog(@"MOLPayMainUI StartLoad");
     }
 }
 
-- (void)webViewDidFinishLoad:(UIWebView *)webView
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     // Run script on Popup
-    NSString *requestPath = webView.request.URL.absoluteString;
+    NSString *requestPath = webView.URL.absoluteString;
     DLog(@"webViewDidFinishLoad, requestPath = %@", requestPath);
     
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:requestPath, @"requestPath", nil];
@@ -184,73 +187,48 @@ const NSString *wrapperVersion = @"0";
     }
     isMainUILoaded = YES;
     
+    if([requestPath rangeOfString:@"intermediate_appTNG-EWALLET.php"].location != NSNotFound){
+        NSLog(@"contain url");
+        
+        [webView evaluateJavaScript:@"document.getElementById('systembrowserurl').innerHTML" completionHandler:^(NSString *result, NSError *error) {
+            if(result != nil) {
+                 
+                // Base64 Decode minimum iOS7
+                NSData *nsdataFromHtmlStringBase64 = [[NSData alloc] initWithBase64EncodedString:result options:0];
+                NSString *htmlString = [[NSString alloc] initWithData:nsdataFromHtmlStringBase64 encoding:NSUTF8StringEncoding];
+                DLog(@"Decoded TNG htmlString: %@", htmlString);
+                NSLog(@"Decoded TNG htmlString: %@", htmlString);
+                    
+                // Open new window if htmlString isn't empty string
+                if (htmlString.length > 0) {
+                    UIApplication *application = [UIApplication sharedApplication];
+                    NSURL *URL = [NSURL URLWithString:htmlString];
+                     [application openURL:URL options:@{}
+                          completionHandler:^(BOOL success) {
+                         NSLog(@"Open %d", success);
+                     }];
+                }
+                else {
+                    DLog(@"mpopenmolpaywindow is empty, skip open new window");
+                    NSLog(@"mpopenmolpaywindow is empty, skip open new window");
+                }
+            }
+            if(error != nil) {
+                NSLog(@"SomeFunction Error: %@",error);
+                return;
+            }
+        }];
+    }
     // Load delayed transactionRequest
     if (isTransactionRequestInQueue) {
         [[MOLPayMainUI getInstance] transactionRequest];
         isTransactionRequestInQueue = NO;
     }
-
-    if([requestPath rangeOfString:@"intermediate_appTNG-EWALLET.php"].location != NSNotFound){
-        NSLog(@"contain url");
-        
-        NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.getElementById('systembrowserurl').innerHTML;"];
-
-        if(html != nil) {
-            // Base64 Decode minimum iOS7
-            NSData *nsdataFromHtmlStringBase64 = [[NSData alloc] initWithBase64EncodedString:html options:0];
-            NSString *htmlString = [[NSString alloc] initWithData:nsdataFromHtmlStringBase64 encoding:NSUTF8StringEncoding];
-            NSLog(@"Decoded TNG htmlString: %@", htmlString);
-
-            //Open new window if htmlString isn't empty string
-            if (htmlString.length > 0) {
-                UIApplication *application = [UIApplication sharedApplication];
-                NSURL *URL = [NSURL URLWithString:htmlString];
-                if ([application canOpenURL:URL]) {
-                    [application openURL:URL options:@{} completionHandler:^(BOOL success) {
-                        NSLog(@"Open TNG Url %d", success);
-                    }];
-                }
-            }
-            else {
-                NSLog(@"mpopenmolpaywindow is empty, skip open new window");
-            }
-        }
-        // [webView evaluateJavaScript:@"document.getElementById('systembrowserurl').innerHTML" completionHandler:^(NSString *result, NSError *error) {
-        //     if(result != nil) {
-                 
-        //         // Base64 Decode minimum iOS7
-        //         NSData *nsdataFromHtmlStringBase64 = [[NSData alloc] initWithBase64EncodedString:result options:0];
-        //         NSString *htmlString = [[NSString alloc] initWithData:nsdataFromHtmlStringBase64 encoding:NSUTF8StringEncoding];
-        //         DLog(@"Decoded TNG htmlString: %@", htmlString);
-        //         NSLog(@"Decoded TNG htmlString: %@", htmlString);
-                    
-        //         // Open new window if htmlString isn't empty string
-        //         if (htmlString.length > 0) {
-        //             UIApplication *application = [UIApplication sharedApplication];
-        //             NSURL *URL = [NSURL URLWithString:htmlString];
-        //             if ([application canOpenURL:URL]) {
-        //                 [application openURL:URL options:@{} completionHandler:^(BOOL success) {
-        //                      DLog(@"Open TNG Url %d", success);
-        //                      NSLog(@"Open TNG Url %d", success);
-        //                  }];
-        //             }
-        //         }
-        //         else {
-        //             DLog(@"mpopenmolpaywindow is empty, skip open new window");
-        //             NSLog(@"mpopenmolpaywindow is empty, skip open new window");
-        //         }
-        //     }
-        //     if(error != nil) {
-        //         NSLog(@"SomeFunction Error: %@",error);
-        //         return;
-        //     }
-        // }];
-    }
 }
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    NSString *requestPath = [[request URL] absoluteString];
+    NSString *requestPath = [[navigationAction.request URL] absoluteString];
     DLog(@"requestPath = %@", requestPath);
     
     NSDictionary* data = [NSDictionary dictionaryWithObjectsAndKeys:requestPath, @"requestPath", nil];
@@ -275,7 +253,8 @@ const NSString *wrapperVersion = @"0";
             if (htmlString.length > 0) {
                 MOLPayWebview *newWindow = [[MOLPayWebview alloc] initWithFrame:self.view.bounds];
                 [self.view addSubview:newWindow];
-                [newWindow setDelegate:self];
+//                [newWindow setUIDelegate:self];
+                [newWindow setNavigationDelegate:self];
                 DLog(@"self.view.subviews = %@", self.view.subviews);
                 
                 // Load htmlString
@@ -386,12 +365,12 @@ const NSString *wrapperVersion = @"0";
             DLog(@"mppinstructioncapture handler end");
         }
         
-        return NO;
+         decisionHandler(WKNavigationActionPolicyCancel);
+    }else{
+        DLog(@"self.view.subviews = %@", self.view.subviews);
+        decisionHandler(WKNavigationActionPolicyAllow);
     }
     
-    DLog(@"self.view.subviews = %@", self.view.subviews);
-    
-    return YES;
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
@@ -418,7 +397,8 @@ const NSString *wrapperVersion = @"0";
     DLog(@"Image saved");
 }
 
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation
+withError:(NSError *)error
 {
     DLog(@"webView error = %@", error);
     if ([error code] != -999) {

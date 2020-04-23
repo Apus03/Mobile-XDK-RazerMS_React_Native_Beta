@@ -1,13 +1,14 @@
 //  Copyright © 2016 MOLPay. All rights reserved.
 
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
 @protocol MOLPayWebviewDelegate <NSObject>
 @required
 - (void)onStatusChanged: (NSDictionary *)data;
 @end
 
-@interface MOLPayWebview : UIWebView
+@interface MOLPayWebview : WKWebView
 
 @property (nonatomic, strong) id <MOLPayWebviewDelegate> molpayWebviewDelegate;
 
