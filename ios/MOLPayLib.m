@@ -14,7 +14,7 @@
 @end
 
 // deploy
-const NSString *wrapperVersion = @"0";
+const NSString *wrapperVersion = @"1";
 
 @implementation MOLPayLib
 
@@ -187,7 +187,7 @@ const NSString *wrapperVersion = @"0";
     }
     isMainUILoaded = YES;
     
-    if([requestPath rangeOfString:@"intermediate_appTNG-EWALLET.php"].location != NSNotFound){
+    if([requestPath rangeOfString:@"intermediate_appTNG-EWALLET.php"].location != NSNotFound || [requestPath rangeOfString:@"intermediate_app/processing.php"].location != NSNotFound){
         NSLog(@"contain url");
         
         [webView evaluateJavaScript:@"document.getElementById('systembrowserurl').innerHTML" completionHandler:^(NSString *result, NSError *error) {
