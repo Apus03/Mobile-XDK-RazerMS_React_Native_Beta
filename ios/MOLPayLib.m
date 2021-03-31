@@ -14,7 +14,7 @@
 @end
 
 // deploy
-const NSString *wrapperVersion = @"1";
+const NSString *wrapperVersion = @"0";
 
 @implementation MOLPayLib
 
