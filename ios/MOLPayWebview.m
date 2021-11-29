@@ -13,11 +13,11 @@
 - (id)init
 {
     self = [super init];
-
+    
     if (self) {
         self.scrollView.bounces = NO;
     }
-
+    
     return self;
 }
 

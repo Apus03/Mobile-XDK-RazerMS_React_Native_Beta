@@ -43,6 +43,14 @@
     
     
     mp.navigationItem.hidesBackButton = YES;
+    if (@available(iOS 15.0, *)) {
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        [appearance configureWithOpaqueBackground];
+        appearance.titleTextAttributes = @{NSForegroundColorAttributeName : UIColor.whiteColor};
+        appearance.backgroundColor = [UIColor whiteColor];
+        [UINavigationBar appearance].standardAppearance = appearance;
+        [UINavigationBar appearance].scrollEdgeAppearance = appearance;
+    }
     if (@available(iOS 13, *)) {
         mp.modalInPresentation = YES;
     }
@@ -85,7 +93,7 @@
     {
         [self dismissViewControllerAnimated:NO completion:nil];
     }
-//    NSLog(@"transactionResult result = %@", result);
+    //    NSLog(@"transactionResult result = %@", result);
 }
 
 @end

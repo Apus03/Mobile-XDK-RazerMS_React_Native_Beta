@@ -45,7 +45,7 @@ const NSString *wrapperVersion = @"0";
         // Init and add webview component with the parent frame
         [self.view addSubview:[MOLPayMainUI getInstance]];
         [[MOLPayMainUI getInstance] setFrame:self.view.frame];
-//        [[MOLPayMainUI getInstance] setUIDelegate:self];
+        //        [[MOLPayMainUI getInstance] setUIDelegate:self];
         [[MOLPayMainUI getInstance] setNavigationDelegate:self];
         [[MOLPayMainUI getInstance] startUI];
     }
@@ -73,7 +73,7 @@ const NSString *wrapperVersion = @"0";
         // Init and add webview component with the parent frame
         [self.view addSubview:[MOLPayMainUI getInstance]];
         [[MOLPayMainUI getInstance] setFrame:self.view.frame];
-//        [[MOLPayMainUI getInstance] setUIDelegate:self];
+        //        [[MOLPayMainUI getInstance] setUIDelegate:self];
         [[MOLPayMainUI getInstance] setNavigationDelegate:self];
         [[MOLPayMainUI getInstance] startUI];
     }
@@ -114,7 +114,7 @@ const NSString *wrapperVersion = @"0";
 {
     [super viewDidAppear:animated];
     [self.view addSubview:[MOLPayMainUI getInstance]];
-//    [[MOLPayMainUI getInstance] setUIDelegate:self];
+    //    [[MOLPayMainUI getInstance] setUIDelegate:self];
     [[MOLPayMainUI getInstance] setNavigationDelegate:self];
     
     if(self.navigationController.navigationBar)
@@ -192,21 +192,21 @@ const NSString *wrapperVersion = @"0";
         
         [webView evaluateJavaScript:@"document.getElementById('systembrowserurl').innerHTML" completionHandler:^(NSString *result, NSError *error) {
             if(result != nil) {
-                 
+                
                 // Base64 Decode minimum iOS7
                 NSData *nsdataFromHtmlStringBase64 = [[NSData alloc] initWithBase64EncodedString:result options:0];
                 NSString *htmlString = [[NSString alloc] initWithData:nsdataFromHtmlStringBase64 encoding:NSUTF8StringEncoding];
                 DLog(@"Decoded TNG htmlString: %@", htmlString);
                 NSLog(@"Decoded TNG htmlString: %@", htmlString);
-                    
+                
                 // Open new window if htmlString isn't empty string
                 if (htmlString.length > 0) {
                     UIApplication *application = [UIApplication sharedApplication];
                     NSURL *URL = [NSURL URLWithString:htmlString];
-                     [application openURL:URL options:@{}
-                          completionHandler:^(BOOL success) {
-                         NSLog(@"Open %d", success);
-                     }];
+                    [application openURL:URL options:@{}
+                       completionHandler:^(BOOL success) {
+                        NSLog(@"Open %d", success);
+                    }];
                 }
                 else {
                     DLog(@"mpopenmolpaywindow is empty, skip open new window");
@@ -253,7 +253,7 @@ const NSString *wrapperVersion = @"0";
             if (htmlString.length > 0) {
                 MOLPayWebview *newWindow = [[MOLPayWebview alloc] initWithFrame:self.view.bounds];
                 [self.view addSubview:newWindow];
-//                [newWindow setUIDelegate:self];
+                //                [newWindow setUIDelegate:self];
                 [newWindow setNavigationDelegate:self];
                 DLog(@"self.view.subviews = %@", self.view.subviews);
                 
@@ -365,7 +365,7 @@ const NSString *wrapperVersion = @"0";
             DLog(@"mppinstructioncapture handler end");
         }
         
-         decisionHandler(WKNavigationActionPolicyCancel);
+        decisionHandler(WKNavigationActionPolicyCancel);
     }else{
         DLog(@"self.view.subviews = %@", self.view.subviews);
         decisionHandler(WKNavigationActionPolicyAllow);
@@ -398,7 +398,7 @@ const NSString *wrapperVersion = @"0";
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation
-withError:(NSError *)error
+      withError:(NSError *)error
 {
     DLog(@"webView error = %@", error);
     if ([error code] != -999) {

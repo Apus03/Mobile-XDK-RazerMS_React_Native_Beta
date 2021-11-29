@@ -4,7 +4,7 @@
 
 <img src="https://user-images.githubusercontent.com/38641542/39353138-654385dc-4a39-11e8-9710-19e5f03ec62e.jpg">
 
-# rms-mobile-xdk-reactnative-beta
+# rms-mobile-xdk-reactnative
 
 This is the beta but functional Razer Merchant Services React Native payment module that is ready to be implemented into any React Native project npm install module. An example application project 
 (MOLPayReactExampleProject) is provided for Razer Merchant Services XDK framework integration reference.

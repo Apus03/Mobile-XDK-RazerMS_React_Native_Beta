@@ -17,7 +17,7 @@
 #import <React/RCTRootView.h>
 #include "MOLPayReactViewController.h"
 
-@interface MOLPayReactManager ()
+@interface MOLPayReactManager()
 
 @end
 
@@ -28,22 +28,22 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(setPaymentDetails:(NSDictionary *)paymentDetails callback:(RCTResponseSenderBlock)callback)
 {
-    MOLPayReactViewController *mpvc = [[MOLPayReactViewController alloc] init];
-    NSMutableDictionary *paymentDetailsMutable = [paymentDetails mutableCopy];
-  
-    [mpvc.view setBackgroundColor:[UIColor whiteColor]];
-    [paymentDetailsMutable setObject:@"YES" forKey:@"is_submodule"];
-    [paymentDetailsMutable setObject:@"molpay-mobile-xdk-reactnative-beta-ios" forKey:@"module_id"];
-    [paymentDetailsMutable setObject:@"0" forKey:@"wrapper_version"];
-    mpvc.PaymentDetails = paymentDetailsMutable;
-  	UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:mpvc];
-  	mpvc.didDismiss = ^(NSDictionary *data) {
-      [[[[UIApplication sharedApplication] windows] firstObject] makeKeyAndVisible];
-    callback(@[data]);
-  };
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:nc animated:YES completion:nil];
-  });
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        MOLPayReactViewController *mpvc = [[MOLPayReactViewController alloc] init];
+        NSMutableDictionary *paymentDetailsMutable = [paymentDetails mutableCopy];
+        
+        [mpvc.view setBackgroundColor:[UIColor whiteColor]];
+        [paymentDetailsMutable setObject:@"YES" forKey:@"is_submodule"];
+        [paymentDetailsMutable setObject:@"molpay-mobile-xdk-reactnative-beta-ios" forKey:@"module_id"];
+        [paymentDetailsMutable setObject:@"0" forKey:@"wrapper_version"];
+        mpvc.PaymentDetails = paymentDetailsMutable;
+        UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:mpvc];
+        mpvc.didDismiss = ^(NSDictionary *data) {
+            [[[[UIApplication sharedApplication] windows] firstObject] makeKeyAndVisible];
+            callback(@[data]);
+        };
+        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:nc animated:YES completion:nil];
+    });
 }
 
 

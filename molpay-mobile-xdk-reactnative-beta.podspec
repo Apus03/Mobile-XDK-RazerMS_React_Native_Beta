@@ -5,7 +5,7 @@ package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 Pod::Spec.new do |s|
   s.name	 = "molpay-mobile-xdk-reactnative-beta"
   s.version      = package['version']
-  s.summary      = "Razer Merchant Services mobile payment for React Native (BETA)"
+  s.summary      = "Razer Merchant Services mobile payment for React Native"
 
   s.authors      = { "Mobile Team" => "mobile-sa@razer.com" }
   s.homepage     = "https://github.com/RazerMS/rms-mobile-xdk-reactnative-beta#readme"
