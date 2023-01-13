@@ -253,6 +253,52 @@ public class MOLPayActivity extends AppCompatActivity {
         }
 
         @Override
+        public boolean shouldOverrideUrlLoading(final WebView view, String url) {
+            Log.d(MOLPAY, "MPMOLPayUIWebClient shouldOverrideUrlLoading5677tg url = " + url);
+
+            if (url != null) {
+                if (url.contains("scbeasy/easy_app_link.html")) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                    } catch (Throwable t) {
+                     finish();
+                    }
+                    view.evaluateJavascript("document.getElementById(\"ref_no\").value", new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String ref_no) {
+                            Log.d(MOLPAY, "MPMOLPayUIWebClient trans_id = " + ref_no.replaceAll("\"", ""));
+                            view.loadUrl("https://pay.merchant.razer.com/RMS/intermediate_app/loading.php?tranID=" + ref_no.replaceAll("\"", ""));
+                        }
+                    });
+                    return true;
+                } else if (url.contains("atome-my.onelink.me") ||
+                        url.contains("boostappdeeplink://") ||
+                        url.contains("market://") ||
+                        url.contains("intent://")) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                    } catch (Throwable t) {
+                     finish();
+                    }
+                    return true;
+                } else if (url.contains("alipays://")) {
+                    try {
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+
+                    } catch (Throwable t) {
+                     finish();
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
 		public void onPageFinished (WebView view, String url) {
 		    Log.d(MOLPAY, "MPMOLPayUIWebClient onPageFinished url = " + url);
 
