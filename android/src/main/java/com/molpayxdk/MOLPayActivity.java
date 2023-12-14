@@ -142,7 +142,7 @@ public class MOLPayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_molpay);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        // getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         paymentDetails = (HashMap<String, Object>) getIntent().getSerializableExtra(MOLPayPaymentDetails);
 
