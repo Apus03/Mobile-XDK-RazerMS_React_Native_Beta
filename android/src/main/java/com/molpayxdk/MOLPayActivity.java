@@ -429,7 +429,7 @@ public class MOLPayActivity extends AppCompatActivity {
                     } else {
                         // Next close button click will finish() the activity
                         isClosingReceipt = true;
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+                        // getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
                     }
                 } catch (Throwable t) {
                     finish();
